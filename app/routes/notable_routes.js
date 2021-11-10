@@ -7,12 +7,12 @@ module.exports = function (app, db) {
 
         const newNote = {text: req.body.body, title: req.body.title}
 
-        db.collection('Notes').insert(newNote, (err, result) => {
+        db.collection('Notes').insertOne(newNote, (err, result) => {
             if(err){
                 return res.send("An error ocurred, please try agian...")
             }
 
-            console.log(result)
+            console.log(result.acknowledged)
             res.send('Successful');
         });
     });
