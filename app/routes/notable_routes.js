@@ -1,19 +1,38 @@
 const { request } = require("express");
+var ObjectID = require('mongodb').ObjectID;
 
 module.exports = function (app, db) {
-    app.post('/notes', (req, res) => {
-        console.log('post note method ');
-        console.log(req.body);
+    app.get('/notes/:id', (req, res) => {
+        console.log('get note method ');
+        const id = req.params.id;
+        console.log(id);
 
-        const newNote = {text: req.body.body, title: req.body.title}
+        const details = { '_id': new ObjectID(id)
+    };
 
-        db.collection('Notes').insertOne(newNote, (err, result) => {
-            if(err){
-                return res.send("An error ocurred, please try agian...")
-            }
+    console.log(details);
+    db.collection('Notes').findOne(details, (err, item) => {
 
-            console.log(result.acknowledged)
-            res.send('Successful');
-        });
+        if (err) {
+            return res.send("An error ocurred, please try agian...")
+        }
+        console.log(item);
+        res.send(item);
     });
+});
+app.post('/notes', (req, res) => {
+    console.log('post note method ');
+    console.log(req.body);
+
+    const newNote = { text: req.body.body, title: req.body.title }
+
+    db.collection('Notes').insertOne(newNote, (err, result) => {
+        if (err) {
+            return res.send("An error ocurred, please try agian...")
+        }
+
+        console.log(result.acknowledged);
+        res.send('Successful');
+    });
+});
 };
